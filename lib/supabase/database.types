@@ -1,0 +1,283 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string
+          username: string | null
+          full_name: string | null
+          avatar_url: string | null
+          mbti_type: string | null
+          decision_style: string | null
+          primary_bias: string | null
+          rationality_score: number
+          empathy_score: number
+          clarity_score: number
+          decisiveness_score: number
+          xp: number
+          level: number
+          streak: number
+          last_active: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          username?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          mbti_type?: string | null
+          decision_style?: string | null
+          primary_bias?: string | null
+          rationality_score?: number
+          empathy_score?: number
+          clarity_score?: number
+          decisiveness_score?: number
+          xp?: number
+          level?: number
+          streak?: number
+          last_active?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          mbti_type?: string | null
+          decision_style?: string | null
+          primary_bias?: string | null
+          rationality_score?: number
+          empathy_score?: number
+          clarity_score?: number
+          decisiveness_score?: number
+          xp?: number
+          level?: number
+          streak?: number
+          last_active?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      scenarios: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          context: string
+          category: string
+          difficulty: number
+          xp_reward: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          context: string
+          category: string
+          difficulty: number
+          xp_reward: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          context?: string
+          category?: string
+          difficulty?: number
+          xp_reward?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      scenario_options: {
+        Row: {
+          id: string
+          scenario_id: string
+          title: string
+          description: string
+          pros: Json | null
+          cons: Json | null
+          rationality_score: number
+          empathy_score: number
+          clarity_score: number
+          decisiveness_score: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          scenario_id: string
+          title: string
+          description: string
+          pros?: Json | null
+          cons?: Json | null
+          rationality_score: number
+          empathy_score: number
+          clarity_score: number
+          decisiveness_score: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          scenario_id?: string
+          title?: string
+          description?: string
+          pros?: Json | null
+          cons?: Json | null
+          rationality_score?: number
+          empathy_score?: number
+          clarity_score?: number
+          decisiveness_score?: number
+          created_at?: string
+        }
+      }
+      user_decisions: {
+        Row: {
+          id: string
+          user_id: string
+          scenario_id: string
+          option_id: string
+          reflection: string | null
+          total_score: number | null
+          xp_earned: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          scenario_id: string
+          option_id: string
+          reflection?: string | null
+          total_score?: number | null
+          xp_earned?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          scenario_id?: string
+          option_id?: string
+          reflection?: string | null
+          total_score?: number | null
+          xp_earned?: number | null
+          created_at?: string
+        }
+      }
+      badges: {
+        Row: {
+          id: string
+          name: string
+          description: string
+          icon: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description: string
+          icon: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string
+          icon?: string
+          created_at?: string
+        }
+      }
+      user_badges: {
+        Row: {
+          user_id: string
+          badge_id: string
+          earned_at: string
+        }
+        Insert: {
+          user_id: string
+          badge_id: string
+          earned_at?: string
+        }
+        Update: {
+          user_id?: string
+          badge_id?: string
+          earned_at?: string
+        }
+      }
+      daily_challenges: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          task: string
+          xp_reward: number
+          active_date: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          task: string
+          xp_reward: number
+          active_date: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          task?: string
+          xp_reward?: number
+          active_date?: string
+          created_at?: string
+        }
+      }
+      user_challenge_completions: {
+        Row: {
+          user_id: string
+          challenge_id: string
+          completed_at: string
+        }
+        Insert: {
+          user_id: string
+          challenge_id: string
+          completed_at?: string
+        }
+        Update: {
+          user_id?: string
+          challenge_id?: string
+          completed_at?: string
+        }
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      increment: {
+        Args: { x: number }
+        Returns: number
+      }
+      weighted_average: {
+        Args: { current_value: number, weight: number }
+        Returns: number
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+  }
+}
