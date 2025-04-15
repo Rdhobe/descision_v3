@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth.config"
+import { authOptions } from '@/lib/auth.config'
 import connectDB from "@/lib/mongodb"
 import { User } from "@/app/models/User"
 import { UserProgress } from "@/app/models/user-progress"
