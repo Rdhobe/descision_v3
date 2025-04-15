@@ -1,3 +1,5 @@
+"use client"
+
 // app/chat/page.tsx
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
