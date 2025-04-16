@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
 // Dynamically import components to avoid hydration issues
-const ChatList = dynamic(() => import('@/components/chat/ChatList').then(mod => mod.ChatList), {
+const ChatList = dynamic(() => import('@/components/chat/ChatList'), {
   ssr: false,
   loading: () => <div className="h-[600px] border rounded-lg animate-pulse bg-muted/20"></div>
 });
