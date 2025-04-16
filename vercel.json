@@ -12,5 +12,5 @@
       "dest": "/$1"
     }
   ],
-  "installCommand": "pnpm install"
+  "installCommand": "pnpm install --no-frozen-lockfile"
 } 
