@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Toaster } from 'sonner';
+
+// Dynamic import for Toaster
+const Toaster = dynamic(() => import('sonner').then(mod => mod.Toaster), { ssr: false });
 
 // Dynamic imports to solve potential client/server hydration issues
 const ChatList = dynamic(() => import('@/components/chat/ChatList').then(mod => mod.ChatList), { 
