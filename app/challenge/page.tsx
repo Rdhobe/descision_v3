@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import ShareScenarioButton from '@/components/ShareScenarioButton'
 
 interface Challenge {
   _id: string
@@ -87,7 +88,23 @@ export default function ChallengePage() {
   }
 
   return (
-    <div className="container max-w-4xl py-8">
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Daily Challenge</h1>
+        {challenge && (
+          <ShareScenarioButton 
+            scenarioId={challenge._id}
+            scenarioType="challenge"
+            scenarioData={{
+              title: challenge.title,
+              description: challenge.description,
+              category: challenge.category,
+              difficulty: parseInt(challenge.difficulty),
+              xp_reward: challenge.xp_reward
+            }}
+          />
+        )}
+      </div>
       <Card>
         <CardHeader>
           <div className="flex justify-between items-start">

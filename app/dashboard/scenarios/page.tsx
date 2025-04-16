@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
+import ShareScenarioButton from '@/components/ShareScenarioButton'
 
 interface Scenario {
   _id: string
@@ -125,11 +126,26 @@ export default function ScenariosPage() {
                   <span>{scenario.attempts || 0} attempts</span>
                 </div>
               )}
-              <Button className="w-full" asChild>
-                <Link href={`/dashboard/scenarios/${scenario._id}`}>
-                  Start Scenario
-                </Link>
-              </Button>
+              <div className="flex gap-2">
+                <Button className="flex-1" asChild>
+                  <Link href={`/dashboard/scenarios/${scenario._id}`}>
+                    Start Scenario
+                  </Link>
+                </Button>
+                <ShareScenarioButton
+                  scenarioId={scenario._id}
+                  scenarioType="scenario"
+                  scenarioData={{
+                    title: scenario.title,
+                    description: scenario.description,
+                    category: scenario.category,
+                    difficulty: parseInt(scenario.difficulty),
+                    xp_reward: scenario.xp_reward
+                  }}
+                  size="icon"
+                  variant="outline"
+                />
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -7,6 +7,18 @@ export interface IChat extends Document {
     content: string;
     timestamp: Date;
     readBy: mongoose.Types.ObjectId[];
+    fileUrl?: string;
+    fileName?: string;
+    fileType?: string;
+    messageType?: 'text' | 'file' | 'scenario' | 'challenge';
+    scenarioId?: mongoose.Types.ObjectId;
+    scenarioData?: {
+      title: string;
+      description: string;
+      category: string;
+      difficulty: number;
+      xp_reward: number;
+    };
   }[];
   lastMessage: {
     content: string;
@@ -41,7 +53,32 @@ const chatSchema = new Schema<IChat>({
     readBy: [{
       type: Schema.Types.ObjectId,
       ref: 'User'
-    }]
+    }],
+    fileUrl: {
+      type: String
+    },
+    fileName: {
+      type: String
+    },
+    fileType: {
+      type: String
+    },
+    messageType: {
+      type: String,
+      enum: ['text', 'file', 'scenario', 'challenge'],
+      default: 'text'
+    },
+    scenarioId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Scenario'
+    },
+    scenarioData: {
+      title: String,
+      description: String,
+      category: String,
+      difficulty: Number,
+      xp_reward: Number
+    }
   }],
   lastMessage: {
     content: String,

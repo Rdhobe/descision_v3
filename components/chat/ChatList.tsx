@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Plus, Users } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useSocket } from '@/hooks/useSocket';
 
 interface ChatListProps {
   onSelectChat: (chat: any) => void;
@@ -24,6 +25,7 @@ export const ChatList = ({ onSelectChat }: ChatListProps) => {
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [openNewChat, setOpenNewChat] = useState(false);
   const [totalUnread, setTotalUnread] = useState(0);
+  const { onReceiveMessage, isConnected } = useSocket();
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -34,8 +36,8 @@ export const ChatList = ({ onSelectChat }: ChatListProps) => {
           throw new Error('Failed to fetch chats');
         }
         const data = await response.json();
-        setChats(data.chats);
-        setTotalUnread(data.totalUnread);
+        setChats(data.chats || []);
+        setTotalUnread(data.totalUnread || 0);
       } catch (error) {
         console.error('Error fetching chats:', error);
         setError('Failed to load chats');
@@ -45,7 +47,17 @@ export const ChatList = ({ onSelectChat }: ChatListProps) => {
     };
 
     fetchChats();
-  }, []);
+
+    // Refresh the chat list when we receive a new message
+    // Only set up the socket listener if socket is connected
+    const unsubscribe = onReceiveMessage ? onReceiveMessage(() => {
+      fetchChats();
+    }) : () => {};
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [onReceiveMessage]);
 
   const fetchUsers = async () => {
     try {

@@ -1,0 +1,30 @@
+name: Daily Scenario Generation
+
+on:
+  schedule:
+    # Run at midnight UTC every day
+    - cron: '0 0 * * *'
+  # Allow manual triggers for testing
+  workflow_dispatch:
+
+jobs:
+  generate-scenario:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          
+      - name: Install dependencies
+        run: npm install dotenv
+        
+      - name: Generate daily scenario
+        run: node scripts/generate-daily-scenario.js
+        env:
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          DAILY_SCENARIO_API_KEY: ${{ secrets.DAILY_SCENARIO_API_KEY }} 

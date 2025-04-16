@@ -9,13 +9,22 @@ import { useRouter } from 'next/navigation'
 import { ScenarioContent } from "../components/scenario-content"
 import { ScenarioOptions } from "../components/scenario-options"
 import { ScenarioFeedback } from "../components/scenario-feedback"
+import { ScenarioQuestionnaire } from "../components/scenario-questionnaire"
+import { ScenarioAnalysis } from "../components/scenario-analysis"
 import { toast } from "sonner"
+import ShareScenarioButton from '@/components/ShareScenarioButton'
 
 interface Option {
   text: string
   is_correct: boolean
   feedback?: string
   explanation?: string
+}
+
+interface Question {
+  id: number
+  text: string
+  answer: string
 }
 
 interface Scenario {
@@ -38,6 +47,12 @@ export default function ScenarioPage({ params }: { params: Promise<{ id: string 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  
+  // New states for questionnaire and analysis
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false)
+  const [showAnalysis, setShowAnalysis] = useState(false)
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [analysisReport, setAnalysisReport] = useState("")
 
   useEffect(() => {
     const fetchScenario = async () => {
@@ -108,6 +123,25 @@ export default function ScenarioPage({ params }: { params: Promise<{ id: string 
     }
   }
 
+  const handleStartScenario = () => {
+    setShowQuestionnaire(true)
+  }
+
+  const handleQuestionnaireComplete = (answers: Question[], analysis: string) => {
+    setQuestions(answers)
+    setAnalysisReport(analysis)
+    setShowQuestionnaire(false)
+    setShowAnalysis(true)
+  }
+
+  const handleQuestionnaireCancel = () => {
+    setShowQuestionnaire(false)
+  }
+
+  const handleAnalysisClose = () => {
+    setShowAnalysis(false)
+  }
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -158,19 +192,64 @@ export default function ScenarioPage({ params }: { params: Promise<{ id: string 
 
   const selectedOptionData = scenario.options.find(opt => opt.text === selectedOption)
 
+  // Show questionnaire when user clicks "Start Scenario"
+  if (showQuestionnaire && scenario) {
+    return (
+      <div className="container max-w-4xl py-6">
+        <ScenarioQuestionnaire
+          scenarioId={scenario._id}
+          title={scenario.title}
+          description={scenario.description}
+          content={scenario.content}
+          onComplete={handleQuestionnaireComplete}
+          onCancel={handleQuestionnaireCancel}
+        />
+      </div>
+    )
+  }
+
+  // Show analysis when questionnaire is completed
+  if (showAnalysis && scenario) {
+    return (
+      <div className="container max-w-4xl py-6">
+        <ScenarioAnalysis
+          scenarioId={scenario._id}
+          title={scenario.title}
+          description={scenario.description}
+          questions={questions}
+          analysis={analysisReport}
+          onClose={handleAnalysisClose}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="container max-w-4xl py-6">
       <div className="mb-8">
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-primary/10 rounded-full">
-                <Brain className="h-5 w-5 text-primary" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Brain className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>{scenario.title}</CardTitle>
+                  <CardDescription>{scenario.category}</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle>{scenario.title}</CardTitle>
-                <CardDescription>{scenario.category}</CardDescription>
-              </div>
+              <ShareScenarioButton
+                scenarioId={scenario._id}
+                scenarioType="scenario"
+                scenarioData={{
+                  title: scenario.title,
+                  description: scenario.description,
+                  category: scenario.category,
+                  difficulty: scenario.difficulty,
+                  xp_reward: scenario.xp_reward
+                }}
+              />
             </div>
           </CardHeader>
           <CardContent>
@@ -181,10 +260,15 @@ export default function ScenarioPage({ params }: { params: Promise<{ id: string 
               xpReward={scenario.xp_reward}
               difficulty={scenario.difficulty}
             />
+            <div className="mt-6 flex justify-center">
+              <Button onClick={handleStartScenario} className="w-full sm:w-auto">
+                Start Scenario
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="mt-6">
           <CardHeader>
             <CardTitle>Your Decision</CardTitle>
             <CardDescription>Choose the option that best aligns with your values</CardDescription>

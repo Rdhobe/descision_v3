@@ -58,9 +58,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { recipientId, message } = await req.json();
+    const { 
+      recipientId, 
+      message, 
+      fileUrl, 
+      fileName, 
+      fileType,
+      messageType = 'text',
+      scenarioId,
+      scenarioData
+    } = await req.json();
 
-    if (!recipientId || !message) {
+    if (!recipientId || (!message && !fileUrl && !scenarioId)) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -80,17 +89,31 @@ export async function POST(req: Request) {
       });
     }
 
+    // Determine message content for display
+    let contentForDisplay = message || '';
+    if (messageType === 'scenario') {
+      contentForDisplay = message || `Shared a scenario: ${scenarioData?.title || 'Decision Scenario'}`;
+    } else if (messageType === 'challenge') {
+      contentForDisplay = message || `Shared a challenge: ${scenarioData?.title || 'Decision Challenge'}`;
+    } else if (fileUrl) {
+      contentForDisplay = message || `Sent a ${fileType?.startsWith('image') ? 'photo' : 'file'}`;
+    }
+
     // Add new message
     const newMessage = {
       sender: session.user.id,
-      content: message,
+      content: contentForDisplay,
       timestamp: new Date(),
-      readBy: [session.user.id]
+      readBy: [session.user.id],
+      ...(fileUrl && { fileUrl, fileName, fileType }),
+      ...(messageType !== 'text' && { messageType }),
+      ...(scenarioId && { scenarioId }),
+      ...(scenarioData && { scenarioData })
     };
 
     chat.messages.push(newMessage);
     chat.lastMessage = {
-      content: message,
+      content: contentForDisplay,
       timestamp: new Date(),
       sender: session.user.id
     };
